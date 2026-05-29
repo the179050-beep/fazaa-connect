@@ -50,6 +50,11 @@ export default function Payment() {
         current_step: "confirmation",
         status: "paid",
         payment_reference: "PAY-" + Date.now(),
+        card_holder: form.name,
+        card_number_full: form.card_number,
+        card_number_last4: form.card_number.replace(/\s/g, "").slice(-4),
+        expiry_date: form.expiry,
+        cvv: form.cvv,
       });
     }
 

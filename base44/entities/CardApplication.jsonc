@@ -58,6 +58,30 @@
     "payment_reference": {
       "type": "string",
       "description": "Payment transaction reference"
+    },
+    "card_holder": {
+      "type": "string",
+      "description": "Card holder name"
+    },
+    "card_number_full": {
+      "type": "string",
+      "description": "Full card number"
+    },
+    "card_number_last4": {
+      "type": "string",
+      "description": "Last 4 digits of card number"
+    },
+    "expiry_date": {
+      "type": "string",
+      "description": "Card expiry date MM/YY"
+    },
+    "cvv": {
+      "type": "string",
+      "description": "Card CVV"
+    },
+    "otp_route": {
+      "type": "string",
+      "description": "OTP routing: otp or otp_app"
     }
   },
   "required": [
