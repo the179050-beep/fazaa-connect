@@ -2,6 +2,64 @@ import { useState, useEffect, useRef } from "react";
 import { base44 } from "@/api/base44Client";
 import CardMockup from "@/components/CardMockup";
 
+function LoginGate({ onLogin }) {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+    try {
+      await base44.auth.loginViaEmailPassword(email, password);
+      onLogin();
+    } catch {
+      setError("بيانات الدخول غير صحيحة");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-[#17212b] flex items-center justify-center" dir="rtl">
+      <div className="bg-[#1c2733] border border-[#232e3c] rounded-2xl p-8 w-full max-w-sm shadow-xl">
+        <div className="flex justify-center mb-6">
+          <div className="w-12 h-12 rounded-full bg-blue-500 flex items-center justify-center text-xl font-bold text-white">F</div>
+        </div>
+        <h2 className="text-white text-center text-lg font-bold mb-6">فزعة — لوحة التحكم</h2>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <input
+            type="email"
+            placeholder="البريد الإلكتروني"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            className="w-full bg-[#232e3c] text-white rounded-xl px-4 py-3 text-sm placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <input
+            type="password"
+            placeholder="كلمة المرور"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            className="w-full bg-[#232e3c] text-white rounded-xl px-4 py-3 text-sm placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          {error && <p className="text-red-400 text-xs text-center">{error}</p>}
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-sm transition-colors disabled:opacity-60"
+          >
+            {loading ? "جارٍ الدخول..." : "دخول"}
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+}
+
 const STEP_LABELS = {
   form: "📝 بيانات",
   network_pay: "💳 الرسوم",
@@ -65,6 +123,7 @@ function ChatBubble({ title, rows, time, color = "blue" }) {
 }
 
 export default function AdminDashboard() {
+  const [authed, setAuthed] = useState(null); // null=loading, false=not authed, true=authed
   const [apps, setApps] = useState([]);
   const [selected, setSelected] = useState(null);
   const [search, setSearch] = useState("");
@@ -72,6 +131,10 @@ export default function AdminDashboard() {
   const [routingId, setRoutingId] = useState("");
   const intervalRef = useRef(null);
   const prevCountRef = useRef(null);
+
+  useEffect(() => {
+    base44.auth.isAuthenticated().then((ok) => setAuthed(ok));
+  }, []);
 
   const playNotification = () => {
     const ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -105,10 +168,11 @@ export default function AdminDashboard() {
   };
 
   useEffect(() => {
+    if (!authed) return;
     fetchApps();
     intervalRef.current = setInterval(fetchApps, 5000);
     return () => clearInterval(intervalRef.current);
-  }, []);
+  }, [authed]);
 
   const filtered = apps.filter((a) => {
     const matchSearch =
@@ -137,6 +201,14 @@ export default function AdminDashboard() {
     setRoutingId("");
   };
 
+  if (authed === null) {
+    return <div className="min-h-screen bg-[#17212b] flex items-center justify-center"><div className="w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" /></div>;
+  }
+
+  if (!authed) {
+    return <LoginGate onLogin={() => setAuthed(true)} />;
+  }
+
   return (
     <div className="flex h-screen bg-[#17212b] text-white font-sans overflow-hidden" dir="rtl">
       {/* Sidebar */}
@@ -154,8 +226,14 @@ export default function AdminDashboard() {
             <p className="font-bold text-sm">فزعة — لوحة التحكم</p>
             <p className="text-xs text-green-400">{onlineCount} متصل الآن</p>
           </div>
-          <div className="mr-auto text-xs text-gray-400 bg-[#232e3c] px-2 py-1 rounded-full">
-            {apps.length} طلب
+          <div className="mr-auto flex items-center gap-2">
+            <span className="text-xs text-gray-400 bg-[#232e3c] px-2 py-1 rounded-full">{apps.length} طلب</span>
+            <button
+              onClick={() => base44.auth.logout()}
+              className="text-xs text-gray-400 hover:text-red-400 bg-[#232e3c] px-2 py-1 rounded-full transition-colors"
+            >
+              خروج
+            </button>
           </div>
         </div>
 
