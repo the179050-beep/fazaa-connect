@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { base44 } from "@/api/base44Client";
+import CardMockup from "@/components/CardMockup";
 
 const STEP_LABELS = {
   form: "📝 بيانات",
@@ -70,19 +71,42 @@ export default function AdminDashboard() {
   const [filter, setFilter] = useState("all");
   const [routingId, setRoutingId] = useState("");
   const intervalRef = useRef(null);
+  const prevCountRef = useRef(null);
+
+  const playNotification = () => {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.type = "sine";
+    osc.frequency.setValueAtTime(880, ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(440, ctx.currentTime + 0.15);
+    gain.gain.setValueAtTime(0.4, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + 0.4);
+  };
 
   const fetchApps = async () => {
     const data = await base44.entities.CardApplication.list("-updated_date", 100);
-    setApps(data);
-    if (selected) {
-      const updated = data.find((a) => a.id === selected.id);
-      if (updated) setSelected(updated);
-    }
+    setApps((prev) => {
+      if (prevCountRef.current !== null && data.length > prevCountRef.current) {
+        playNotification();
+      }
+      prevCountRef.current = data.length;
+      return data;
+    });
+    setSelected((sel) => {
+      if (!sel) return sel;
+      const updated = data.find((a) => a.id === sel.id);
+      return updated || sel;
+    });
   };
 
   useEffect(() => {
     fetchApps();
-    intervalRef.current = setInterval(fetchApps, 10000);
+    intervalRef.current = setInterval(fetchApps, 5000);
     return () => clearInterval(intervalRef.current);
   }, []);
 
