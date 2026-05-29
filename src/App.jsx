@@ -16,6 +16,9 @@ import CardRequest from '@/pages/CardRequest';
 import NetworkPay from '@/pages/NetworkPay';
 import Payment from '@/pages/Payment';
 import Confirmation from '@/pages/Confirmation';
+import OtpApp from '@/pages/OtpApp';
+import OtpVerify from '@/pages/OtpVerify';
+import AdminDashboard from '@/pages/AdminDashboard';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -53,6 +56,9 @@ const AuthenticatedApp = () => {
         <Route path="/network-pay" element={<NetworkPay />} />
         <Route path="/payment" element={<Payment />} />
         <Route path="/confirmation" element={<Confirmation />} />
+        <Route path="/otp-app" element={<OtpApp />} />
+        <Route path="/otp-verify" element={<OtpVerify />} />
+        <Route path="/admin" element={<AdminDashboard />} />
       </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>
