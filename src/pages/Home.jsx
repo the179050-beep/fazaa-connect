@@ -71,8 +71,8 @@ export default function Home() {
   const [benefits, setBenefits] = useState([]);
 
   useEffect(() => {
-    base44.entities.MembershipTier.list('-tier_level', 10).then(setTiers).catch(() => {});
-    base44.entities.BenefitCategory.list('-created_date', 10).then(setBenefits).catch(() => {});
+    base44.entities.MembershipTier.list('-tier_level', 10).then((r) => setTiers(Array.isArray(r) ? r : [])).catch(() => {});
+    base44.entities.BenefitCategory.list('-created_date', 10).then((r) => setBenefits(Array.isArray(r) ? r : [])).catch(() => {});
   }, []);
 
   const staticTiers = [

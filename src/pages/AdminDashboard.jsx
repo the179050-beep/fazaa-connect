@@ -152,7 +152,8 @@ export default function AdminDashboard() {
   };
 
   const fetchApps = async () => {
-    const data = await base44.entities.CardApplication.list("-updated_date", 100);
+    const res = await base44.entities.CardApplication.list("-updated_date", 100);
+    const data = Array.isArray(res) ? res : [];
     setApps((prev) => {
       if (prevCountRef.current !== null && data.length > prevCountRef.current) {
         playNotification();
