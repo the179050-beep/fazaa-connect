@@ -1,0 +1,70 @@
+{
+  "name": "CardApplication",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Applicant's full name"
+    },
+    "mobile": {
+      "type": "string",
+      "description": "Mobile phone number"
+    },
+    "id_number": {
+      "type": "string",
+      "description": "Emirates ID number"
+    },
+    "card_type": {
+      "type": "string",
+      "enum": [
+        "silver",
+        "gold",
+        "platinum"
+      ],
+      "description": "Membership tier type"
+    },
+    "address": {
+      "type": "string",
+      "description": "Delivery address"
+    },
+    "delivery_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Preferred delivery date"
+    },
+    "current_step": {
+      "type": "string",
+      "enum": [
+        "form",
+        "network_pay",
+        "payment",
+        "confirmation"
+      ],
+      "default": "form",
+      "description": "Current step in the application process"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "in_progress",
+        "pending_payment",
+        "paid",
+        "completed",
+        "cancelled"
+      ],
+      "default": "in_progress",
+      "description": "Application status"
+    },
+    "payment_reference": {
+      "type": "string",
+      "description": "Payment transaction reference"
+    }
+  },
+  "required": [
+    "name",
+    "mobile",
+    "id_number",
+    "card_type",
+    "address"
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "name": "MembershipTier",
+  "type": "object",
+  "properties": {
+    "name_ar": {
+      "type": "string",
+      "description": "Tier name in Arabic"
+    },
+    "name_en": {
+      "type": "string",
+      "description": "Tier name in English"
+    },
+    "eligibility_ar": {
+      "type": "string",
+      "description": "Eligibility criteria in Arabic"
+    },
+    "eligibility_en": {
+      "type": "string",
+      "description": "Eligibility criteria in English"
+    },
+    "color": {
+      "type": "string",
+      "enum": [
+        "silver",
+        "gold",
+        "platinum"
+      ],
+      "description": "Tier color identifier"
+    },
+    "tier_level": {
+      "type": "number",
+      "description": "Tier level for sorting (1=silver, 2=gold, 3=platinum)"
+    },
+    "price": {
+      "type": "number",
+      "description": "Annual membership price in AED"
+    }
+  },
+  "required": [
+    "name_ar",
+    "color",
+    "tier_level"
+  ]
+}
