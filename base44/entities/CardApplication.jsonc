@@ -38,6 +38,8 @@
         "form",
         "network_pay",
         "payment",
+        "otp_pending",
+        "otp",
         "confirmation"
       ],
       "default": "form",

