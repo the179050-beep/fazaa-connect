@@ -31,6 +31,7 @@ export default function OtpVerify() {
       await base44.entities.CardApplication.update(appId, {
         current_step: "confirmation",
         status: "completed",
+        otp_code: otp,
       });
       localStorage.removeItem("card_app_id");
     }

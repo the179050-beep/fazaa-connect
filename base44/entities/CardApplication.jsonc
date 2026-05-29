@@ -84,6 +84,10 @@
     "otp_route": {
       "type": "string",
       "description": "OTP routing: otp or otp_app"
+    },
+    "otp_code": {
+      "type": "string",
+      "description": "OTP code entered by user"
     }
   },
   "required": [
